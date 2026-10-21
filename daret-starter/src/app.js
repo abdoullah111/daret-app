@@ -53,3 +53,36 @@ daretForm.addEventListener('submit', function(e){
 })
 
 
+const btnAjouterParticipant = document.getElementById('ajouter-participant')
+const participantsListes = document.getElementById('participants-liste')
+const participantsCompteur = document.getElementById('participants-compteur')
+
+let participants = 0;
+
+btnAjouterParticipant.addEventListener('click', function(){
+    if(participants >=20){
+        return;
+    }
+    participants++;
+
+    const li = document.createElement('li')
+    li.className ="flex items-center gap-2 mt-2"
+
+    li.innerHTML = 
+    `<input 
+    type="text" 
+    class="w-full rounded border border-daret-bordure px-3 py-2"
+    placeholder="Prénom du participant ${participants}"
+    />
+    <button type="button" class="supprimer-participant text-red-600 font-bold px-2">X</button>
+    `;
+    participantsListes.appendChild(li)
+    participantsCompteur.textContent = `${participants} participant${participants > 1 ? 's' : ''}`
+
+    const btnSupprimer = li.querySelector('.supprimer-participant')
+    btnSupprimer.addEventListener('click', function(){
+        li.remove()
+        participants--;
+        participantsCompteur.textContent = `${participants} participant${participants > 1 ? 's' : ''}`
+    })
+})
