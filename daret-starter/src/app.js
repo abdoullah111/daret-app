@@ -1,5 +1,4 @@
 // Daret — simulateur. Ton code commence ici.
-// Le HTML (index.html) est déjà intégré : lis-le, repère les id et les data-*, puis fais-le vivre.
 const daretForm = document.getElementById('daret-form');
 const name = document.getElementById('nom-cercle');
 const nameErreur = document.getElementById('nom-cercle-erreur');
@@ -12,8 +11,71 @@ const dateErreur = document.getElementById('date-debut-erreur');
 const regexNom = /^[\wÀ-ÿ\s-]+$/;
 const regexCotisation = /^\d+(\.\d+)?$/;
 
+const btnAjouterParticipant = document.getElementById('ajouter-participant');
+const participantsListes = document.getElementById('participants-liste');
+const participantsCompteur = document.getElementById('participants-compteur');
+const participantsErreur = document.getElementById('participants-erreur');
+
 const today = new Date().toISOString().split("T")[0];
-date.setAttribute('min', today)
+date.setAttribute('min', today);
+
+let participants = 0;
+
+function creerParticipant(){
+    participants++;
+    const li = document.createElement('li');
+    li.className = "flex items-center gap-2 mt-2";
+
+    const input = document.createElement('input');
+    input.type = "text";
+    input.className = " rounded border border-daret-bordure px-3 py-2 bg-daret-fond";
+    input.placeholder = `Prénom du participant ${participants}`;
+    li.appendChild(input);
+
+    const btnSupprimer = document.createElement('button');
+    btnSupprimer.type = "button";
+    btnSupprimer.textContent = "supprimer";
+    btnSupprimer.className = "rounded border border-daret-bordure px-3 py-2 font-medium text-white hover:bg-daret-vert-clair ";
+    btnSupprimer.style="background-color: #dc2626;"
+    btnSupprimer.style.marginLeft = "8px";
+    
+    li.appendChild(btnSupprimer);
+    participantsListes.appendChild(li);
+    participantsCompteur.textContent = `${participants} participant${participants > 1 ? 's' : ''}`;
+
+    btnSupprimer.addEventListener('click', function(){
+        if(participants <=2){
+            participantsErreur.textContent = "Il faut au moins 2 participants.";
+            participantsErreur.classList.remove('hidden');
+            return;
+        }
+
+        li.remove();
+        participants--;
+        participantsCompteur.textContent = `${participants} participant${participants > 1 ? 's' : ''}`;
+        
+        if(participants >= 2 && participants <= 20){
+            participantsErreur.textContent ="";
+            participantsErreur.classList.add('hidden');
+        }
+        
+    });
+}
+for (let i = 0 ; i < 3; i++){
+    creerParticipant();
+}
+
+btnAjouterParticipant.addEventListener('click', function(){
+    if(participants >= 20){
+        participantsErreur.textContent = "Le nombre maximum est 20.";
+        participantsErreur.classList.remove('hidden');
+        return;
+    }
+    participantsErreur.textContent = "";
+    participantsErreur.classList.add('hidden');
+    creerParticipant();
+});
+
 
 daretForm.addEventListener('submit', function(e){
     e.preventDefault();
@@ -21,68 +83,34 @@ daretForm.addEventListener('submit', function(e){
     const word = name.value.trim();
     if(word === "" || !regexNom.test(word) || word.length < 3 || word.length > 40){
         nameErreur.textContent = "Le nom du cercle doit contenir entre 3 et 40 caractères (lettres, chiffres, espaces, tirets).";
-        nameErreur.classList.remove('hidden')
+        nameErreur.classList.remove('hidden');
     }else{
         nameErreur.textContent = "";
-        nameErreur.classList.add('hidden')
+        nameErreur.classList.add('hidden');
     }
-    const cotValue = Number(cot.value)
+    const cotValue = Number(cot.value);
     if(cot.value.trim() === "" || !Number.isInteger(cotValue) || cotValue < 100 || cotValue > 50000){
         cotErreur.textContent = "La cotisation doit être un nombre entier entre 100 et 50 000 MAD.";
-        cotErreur.classList.remove('hidden')
+        cotErreur.classList.remove('hidden');
     }else{
         cotErreur.textContent = "";
-        cotErreur.classList.add('hidden')
+        cotErreur.classList.add('hidden');
     }
 
     if(per.value === ""){
         perErreur.textContent = "Veuillez choisir une périodicité.";
-        perErreur.classList.remove('hidden')
+        perErreur.classList.remove('hidden');
     }else{
         perErreur.textContent = "";
-        perErreur.classList.add('hidden')
+        perErreur.classList.add('hidden');
     }
     
     if(date.value === "" || date.value < today){
         dateErreur.textContent = "Veuillez entrer une date de début valide (aujourd'hui ou plus tard).";
-        dateErreur.classList.remove('hidden')
+        dateErreur.classList.remove('hidden');
     }else{
         dateErreur.textContent = "";
-        dateErreur.classList.add('hidden') 
+        dateErreur.classList.add('hidden');
     }
-})
 
-
-const btnAjouterParticipant = document.getElementById('ajouter-participant')
-const participantsListes = document.getElementById('participants-liste')
-const participantsCompteur = document.getElementById('participants-compteur')
-
-let participants = 0;
-
-btnAjouterParticipant.addEventListener('click', function(){
-    if(participants >=20){
-        return;
-    }
-    participants++;
-
-    const li = document.createElement('li')
-    li.className ="flex items-center gap-2 mt-2"
-
-    li.innerHTML = 
-    `<input 
-    type="text" 
-    class="w-full rounded border border-daret-bordure px-3 py-2"
-    placeholder="Prénom du participant ${participants}"
-    />
-    <button type="button" class="supprimer-participant text-red-600 font-bold px-2">X</button>
-    `;
-    participantsListes.appendChild(li)
-    participantsCompteur.textContent = `${participants} participant${participants > 1 ? 's' : ''}`
-
-    const btnSupprimer = li.querySelector('.supprimer-participant')
-    btnSupprimer.addEventListener('click', function(){
-        li.remove()
-        participants--;
-        participantsCompteur.textContent = `${participants} participant${participants > 1 ? 's' : ''}`
-    })
-})
+});
