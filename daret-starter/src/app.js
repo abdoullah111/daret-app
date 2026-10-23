@@ -8,7 +8,7 @@ const per = document.getElementById('periodicite');
 const perErreur = document.getElementById('periodicite-erreur');
 const date = document.getElementById('date-debut');
 const dateErreur = document.getElementById('date-debut-erreur');
-const regexNom = /^[\wÀ-ÿ\s-]+$/;
+const regexNom = /^[A-Za-zÀ-ÿ\s-]+$/;
 const regexCotisation = /^\d+(\.\d+)?$/;
 
 const btnAjouterParticipant = document.getElementById('ajouter-participant');
@@ -34,14 +34,14 @@ function creerParticipant(){
 
     const btnSupprimer = document.createElement('button');
     btnSupprimer.type = "button";
-    btnSupprimer.textContent = "supprimer";
+    btnSupprimer.textContent = "Remove";
     btnSupprimer.className = "rounded border border-daret-bordure px-3 py-2 font-medium text-white hover:bg-daret-vert-clair ";
     btnSupprimer.style="background-color: #dc2626;"
     btnSupprimer.style.marginLeft = "8px";
     
     li.appendChild(btnSupprimer);
     participantsListes.appendChild(li);
-    participantsCompteur.textContent = `${participants} participant${participants > 1 ? 's' : ''}`;
+    participantsCompteur.textContent = `participants ${participants}`;
 
     btnSupprimer.addEventListener('click', function(){
         if(participants <=2){
@@ -52,7 +52,7 @@ function creerParticipant(){
 
         li.remove();
         participants--;
-        participantsCompteur.textContent = `${participants} participant${participants > 1 ? 's' : ''}`;
+        participantsCompteur.textContent = `participants ${participants}`;
         
         if(participants >= 2 && participants <= 20){
             participantsErreur.textContent ="";
@@ -112,5 +112,51 @@ daretForm.addEventListener('submit', function(e){
         dateErreur.textContent = "";
         dateErreur.classList.add('hidden');
     }
+        //    us-03
+    const cotVal = Number(cot.value);
+    const perVal = per.value;
+    const dateVal = date.value;
+
+    const recu = calculerMontantRecu(cotVal, participants);
+    const verse = calculerTotalVerse(cotVal, participants);
+    const par = PARTICIPANTS(participants);
+    const dateFin = calculerDateFin(perVal, participants, dateVal);
+
+    document.getElementById('contenu-resultat').classList.remove('hidden');
+    document.getElementById('resume-cagnotte').textContent = recu +" DH"
+    document.getElementById('resume-total-cycle').textContent = verse + " DH";
+    document.getElementById('resume-nb-tours').textContent = par;
+    document.getElementById('resume-dates').textContent = dateVal + " / " + dateFin;
 
 });
+
+            // us-03
+function calculerMontantRecu(cot, participants){
+    return cot * participants;
+}
+function calculerTotalVerse(cot, participants){
+    return cot * participants;
+}
+
+function PARTICIPANTS(participants){
+    return participants;
+}
+
+function calculerDateFin(periodicite, participants, Tdate ){
+    const date = new Date(Tdate)
+    const tour = participants - 1;
+
+    if (periodicite === "mensuelle"){
+        date.setMonth(date.getMonth() + tour)
+    }
+
+    if(periodicite === "hebdomadaire"){
+        date.setDate(date.getDate() + (tour * 7))
+    }
+
+    if(periodicite === "quinzaine"){
+        date.setDate(date.getDate() + (tour * 15))
+    }
+
+    return date.toISOString().split("T")[0];
+} 
