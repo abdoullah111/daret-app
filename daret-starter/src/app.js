@@ -1,3 +1,4 @@
+
 // Daret — simulateur. Ton code commence ici.
 const daretForm = document.getElementById('daret-form');
 const name = document.getElementById('nom-cercle');
@@ -125,9 +126,12 @@ daretForm.addEventListener('submit', function(e){
     document.getElementById('contenu-resultat').classList.remove('hidden');
     document.getElementById('resume-cagnotte').textContent = recu +" DH"
     document.getElementById('resume-total-cycle').textContent = verse + " DH";
-    document.getElementById('resume-nb-tours').textContent = par;
-    document.getElementById('resume-dates').textContent = dateVal + " / " + dateFin;
+    document.getElementById('resume-nb-tours').textContent = par + " Tour";
+    document.getElementById('resume-dates').textContent = dateVal + " ➔ " + dateFin;
 
+            //   us-04
+    genererCalendrier();
+    
 });
 
             // us-03
@@ -159,4 +163,74 @@ function calculerDateFin(periodicite, participants, Tdate ){
     }
 
     return date.toISOString().split("T")[0];
-} 
+
+}  
+
+function queryParticipants(){
+const Nparticipantsliste = document.querySelectorAll('#participants-liste input')
+let newParticipants = [];
+for (let input of Nparticipantsliste){
+    newParticipants.push(input.value)
+}
+return newParticipants;
+}
+
+
+
+function genererCalendrier(){
+    const Tbody = document.getElementById('calendrier-corps');
+    Tbody.innerHTML = "";
+    const laDate =  new Date(date.value);
+    const participantsNoms = queryParticipants();
+    participantsNoms.forEach((nom, index) =>{
+       const tr = document.createElement('tr');
+
+       const tdTour = document.createElement('td');
+       tdTour.textContent = index + 1;
+       tdTour.className = "px-4 py-3"
+       tr.appendChild(tdTour);
+
+       const tdDate = document.createElement('td');
+       tdDate.textContent = laDate.toLocaleDateString('fr-FR', {day: 'numeric', month:'long', year: 'numeric' });
+       tdDate.className = "px-4 py-3"
+       tr.appendChild(tdDate);
+
+       const tdNom = document.createElement('td')
+       tdNom.textContent = nom;
+       tdNom.className = "px-4 py-3"
+       tr.appendChild(tdNom);
+       
+
+       if(per.value === "mensuelle"){
+        laDate.setMonth(laDate.getMonth() + 1)
+       }
+       if(per.value === "quinzaine"){
+        laDate.setDate(laDate.getDate() + 15)
+       }
+       if(per.value === "hebdomadaire"){
+        laDate.setDate(laDate.getDate() + 7)
+       }
+
+       const TdMontant = document.createElement('td');
+       TdMontant.textContent = (cot.value * participantsNoms.length) + " DH";
+       TdMontant.className = "px-4 py-3"
+       tr.appendChild(TdMontant);
+
+       const TdStatus = document.createElement('td');
+       if(index === 0){
+        TdStatus.textContent = "Payé";
+        TdStatus.style.color = "#16a34a"
+       }else{
+        TdStatus.textContent = "En attente";
+        TdStatus.style.color = "#dc2626"
+       }
+       TdStatus.className = "px-4 py-3"
+       tr.appendChild(TdStatus)
+       
+       
+       Tbody.appendChild(tr)
+    })
+    
+}
+
+
