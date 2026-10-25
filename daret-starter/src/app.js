@@ -130,6 +130,7 @@ daretForm.addEventListener('submit', function(e){
     document.getElementById('resume-dates').textContent = dateVal + " ➔ " + dateFin;
 
             //   us-04
+    ordre = null;
     genererCalendrier();
     
 });
@@ -181,7 +182,7 @@ function genererCalendrier(){
     const Tbody = document.getElementById('calendrier-corps');
     Tbody.innerHTML = "";
     const laDate =  new Date(date.value);
-    const participantsNoms = queryParticipants();
+    const participantsNoms = ordre || queryParticipants();
     participantsNoms.forEach((nom, index) =>{
        const tr = document.createElement('tr');
 
@@ -227,10 +228,24 @@ function genererCalendrier(){
        TdStatus.className = "px-4 py-3"
        tr.appendChild(TdStatus)
        
-       
        Tbody.appendChild(tr)
     })
     
 }
+let ordre = null
+document.getElementById('tirage-au-sort').onclick = function(){
+    ordre = [];
+    const noms = queryParticipants()
+    while(noms.length > 0){
+        const i = Math.floor(Math.random() * noms.length)
+        ordre.push(noms[i]);
+        noms.splice(i, 1)
+    }
+    genererCalendrier();
+}
 
+document.getElementById('ordre-saisie').onclick = function (){
+    ordre = null;
+    genererCalendrier();
+}
 
