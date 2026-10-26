@@ -1,4 +1,5 @@
 
+
 // Daret — simulateur. Ton code commence ici.
 const daretForm = document.getElementById('daret-form');
 const name = document.getElementById('nom-cercle');
@@ -183,6 +184,8 @@ function genererCalendrier(){
     Tbody.innerHTML = "";
     const laDate =  new Date(date.value);
     const participantsNoms = ordre || queryParticipants();
+    let k = 0;
+    const some = document.createElement('p')
     participantsNoms.forEach((nom, index) =>{
        const tr = document.createElement('tr');
 
@@ -218,18 +221,33 @@ function genererCalendrier(){
        tr.appendChild(TdMontant);
 
        const TdStatus = document.createElement('td');
-       if(index === 0){
-        TdStatus.textContent = "Payé";
-        TdStatus.style.color = "#16a34a"
-       }else{
-        TdStatus.textContent = "En attente";
-        TdStatus.style.color = "#dc2626"
-       }
-       TdStatus.className = "px-4 py-3"
+       TdStatus.textContent = "À venir";
+       TdStatus.classList.add("status")
        tr.appendChild(TdStatus)
        
-       Tbody.appendChild(tr)
+       const TdButton = document.createElement('button');
+       TdButton.textContent = "Terminé";
+       TdButton.className="mt-3 rounded border border-daret-vert px-4 py-2 font-medium text-daret-vert hover:bg-daret-vert-clair focus:outline-2 focus:outline-offset-2 focus:outline-daret-vert"
+       TdButton.addEventListener("click", function(){
+       let change = TdButton.closest('tr');
+       if(TdButton.textContent =="Terminé"){
+        TdButton.textContent = "Annuler";
+        change.querySelector(".status").textContent ="Terminé";
+        k++
+       }else{
+        TdButton.textContent = "Terminé";
+        change.querySelector(".status").textContent = "À venir"
+        k--
+       }
+       
+       some.textContent = k+ " tours terminés sur "+ participants;
+       
     })
+    tr.appendChild(TdButton);
+    
+    Tbody.appendChild(tr)
+    Tbody.appendChild(some)
+})
     
 }
 let ordre = null
@@ -248,4 +266,3 @@ document.getElementById('ordre-saisie').onclick = function (){
     ordre = null;
     genererCalendrier();
 }
-
